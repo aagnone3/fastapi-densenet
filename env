@@ -1,0 +1,14 @@
+# Working directory for the application inside the container
+WORKING_DIRECTORY=/app
+
+# Port to serve over
+SERVER_PORT=8804
+
+# Port that the application will use inside the container
+CONTAINER_PORT=80
+
+# Docker username
+DOCKER_USERNAME=aagnone
+
+# Name of repository to create in Docker Hub
+DOCKER_REPO=fastapi-sentiment
