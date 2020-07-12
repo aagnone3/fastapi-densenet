@@ -1,2 +1,2 @@
 # fastapi-mobilenet
-FastAPI deployed onto Amazon ECS to serve mobilenet predictions
+FastAPI deployed onto Amazon ECS to serve sentiment analysis predictions
