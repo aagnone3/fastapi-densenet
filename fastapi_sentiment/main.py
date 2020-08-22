@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 
 from fastapi_sentiment import sentiment_analysis
-from fastapi_sentiment.models import SentimentDocument, SentimentScoring, Message
+from fastapi_sentiment.models import (
+    SentimentDocument,
+    SentimentScoring,
+    Message
+)
 
 app = FastAPI()
 
