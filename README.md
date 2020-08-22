@@ -11,3 +11,6 @@ copilot init
 copilot env init --name prod --profile default --app fastapi-sentiment
 copilot svc deploy --name fastapi-sentiment --env prod
 ```
+
+## Query Your Deployed App
+![demo-gif](etc/demo.gif)
