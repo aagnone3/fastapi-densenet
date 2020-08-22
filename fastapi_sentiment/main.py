@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from app import sentiment_analysis
-from app.models import SentimentDocument, SentimentScoring, Message
+from fastapi_sentiment import sentiment_analysis
+from fastapi_sentiment.models import SentimentDocument, SentimentScoring, Message
 
 app = FastAPI()
 
@@ -14,9 +14,9 @@ def read_root() -> Message:
 
 
 @app.get("/health", response_model=Message, status_code=200)
-def get_health() -> Message:
+async def get_health() -> Message:
     return {
-        'message': "I'm always healthy"
+        'message': 'Still kicking'
     }
 
 

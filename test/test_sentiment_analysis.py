@@ -1,4 +1,4 @@
-from app import sentiment_analysis
+from fastapi_sentiment import sentiment_analysis
 
 
 def test_shape_get_sentiment():

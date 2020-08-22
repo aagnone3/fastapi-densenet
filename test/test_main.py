@@ -9,11 +9,11 @@ def test_get_health(api_client):
     response = api_client.get('/health')
     assert response.status_code == 200
     assert response.json() == {
-        'message': "I'm always healthy"
+        'message': "Still kicking"
     }
 
 def test_sentiment(api_client):
-    response = api_client.get('/sentiment', json={
+    response = api_client.post('/sentiment', json={
         'text': 'I love tests'
     })
     assert response.status_code == 200

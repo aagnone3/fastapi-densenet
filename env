@@ -1,5 +1,5 @@
 # Working directory for the application inside the container
-WORKING_DIRECTORY=/app
+WORKING_DIRECTORY=/opt
 
 # Port to serve over
 SERVER_PORT=8804

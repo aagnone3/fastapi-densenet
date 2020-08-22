@@ -1,17 +1,30 @@
 include ./env
 
-.DEFAULT_GOAL := help
+# variables
 TAG ?= latest
 DOCKER ?= docker
 DOCKERFILE ?= Dockerfile
 DOCKER_TAG ?= latest
-WORKING_DIRECTORY ?= /opt
-DOCKER_REPO_URI = ${DOCKER_USERNAME}/${DOCKER_REPO}:${DOCKER_TAG}
+WORKING_DIRECTORY ?= /opt  # must match WORKDIR in Dockerfile
+
+# definitions
+.DEFAULT_GOAL := help
+DOCKER_REPO_URI := ${DOCKER_USERNAME}/${DOCKER_REPO}:${DOCKER_TAG}
+
+# convenience function to run a command inside the container
+define docker-command
+	$(DOCKER) run \
+		--mount type=bind,source="$(shell pwd)",target=$(WORKING_DIRECTORY) \
+		-p $(SERVER_PORT):$(CONTAINER_PORT) \
+		-ti \
+		--rm \
+		$(DOCKER_REPO) \
+			$(1)
+endef
 
 .PHONY: help
 help: ## Print this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sed -E 's/^([a-zA-Z_-]+):.*## (.*)$$/\1: \2/' | awk -F ':' '{ printf "%-10s %s\n", $$1, $$2 }'
-
 
 .PHONY: login
 login: ## Login to Docker
@@ -21,7 +34,6 @@ login: ## Login to Docker
 build: ## Build the Docker image
 	$(DOCKER) build \
 		-t $(DOCKER_REPO) \
-		--build-arg WORKING_DIRECTORY=$(WORKING_DIRECTORY) \
 		.
 
 .PHONY: image
@@ -37,38 +49,12 @@ push: tag  ## Push the Docker image to the Docker repository
 
 .PHONY: shell
 shell: ## Run the Docker image
-	$(DOCKER) run \
-		--mount type=bind,source="$(shell pwd)",target=$(WORKING_DIRECTORY) \
-		-ti \
-		--rm \
-		$(DOCKER_REPO) \
-			bash
+	$(call docker-command, bash)
 
 .PHONY: test
 test: ## Test the application inside a Docker container
-	$(DOCKER) run \
-		--mount type=bind,source="$(shell pwd)",target=$(WORKING_DIRECTORY) \
-		-p $(SERVER_PORT):$(CONTAINER_PORT) \
-		-ti \
-		--rm \
-		$(DOCKER_REPO) \
-			pytest
+	$(call docker-command, pytest)
 
 .PHONY: serve
 serve: ## Run the Docker image
-	$(DOCKER) run \
-		--mount type=bind,source="$(shell pwd)",target=$(WORKING_DIRECTORY) \
-		-p $(SERVER_PORT):$(CONTAINER_PORT) \
-		-ti \
-		--rm \
-		$(DOCKER_REPO)
-
-.PHONY: jup
-jup: ## Run a Jupyter notebook inside the Docker container
-	$(DOCKER) run \
-		--mount type=bind,source="$(shell pwd)",target=$(WORKING_DIRECTORY) \
-		-p $(JUPYTER_PORT):$(JUPYTER_PORT) \
-		-ti \
-		--rm \
-		$(DOCKER_REPO)
-		jupyter-lab --allow-root --ip=0.0.0.0 --port=$(JUPYTER_PORT) --no-browser 2>&1 | tee jupyter-log.txt
+	$(call docker-command)
